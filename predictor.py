@@ -11,9 +11,10 @@ Created on Wed Jan  8 09:52:15 2020
 import cv2
 import tensorflow as tf
 
-CATEGORIES = ["Dog", "Cat"]
+CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
 
+#Evt. gøres på en anden måde med webcam eller andet
 def prepare(filepath):
     IMG_SIZE = 50  # 50 in txt-based
     img_array = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)

@@ -22,6 +22,7 @@ X = pickle.load(pickle_in)
 pickle_in = open("y.pickle","rb")
 y = pickle.load(pickle_in)
 
+#Standardizing/normalizing data by using the highest possible pixel value
 X = X/255.0
 
 dense_layers = [0]
