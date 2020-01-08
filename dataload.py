@@ -11,10 +11,9 @@ import matplotlib.pyplot as plt
 import os
 import cv2
 from tqdm import tqdm
+import pandas as pd
 
 
-
-DATADIR = "/Users/Jacobsen/Desktop/cat&dogs/PetImages"
 
 CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
@@ -29,13 +28,12 @@ CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
     break  #...and one more!
     """
 
-
-IMG_SIZE = 50
-
 #new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
 
 
-training_data = []
+"""training_data = []
+
+
 
 def create_training_data():
     for category in CATEGORIES:  # do emotions
@@ -55,23 +53,33 @@ def create_training_data():
             #except Exception as e:
             #    print("general exception", e, os.path.join(path,img))
 
-create_training_data()
+create_training_data()"""
 
 
-import random
 
-random.shuffle(training_data)
+"""for features,label in training_data:
+    X.append(features)
+    y.append(label)"""
+
+
+filename = '/Users/AlbertoK/Desktop/fer2013.csv'
+data = pd.read_csv(filename, sep=",")
+data = data.drop('Usage',axis=1)
 
 X = []
-y = []
 
-for features,label in training_data:
-    X.append(features)
-    y.append(label)
+pixels = data.pixels
+for i in range(len(pixels)):
+    img_array = list(map(int, list(pixels[i].split(" "))))
+    IMG_SIZE = int(np.sqrt(np.size(img_array)))
+    X.append(np.reshape(img_array,(IMG_SIZE, IMG_SIZE)))
+
+X = list(X)
+y = list(data.emotion)
+
 
 
 X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
-
 
 
 import pickle
@@ -83,8 +91,6 @@ pickle_out.close()
 pickle_out = open("y.pickle","wb")
 pickle.dump(y, pickle_out)
 pickle_out.close()
-
-
 
 
 
