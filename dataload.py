@@ -62,20 +62,23 @@ create_training_data()"""
     y.append(label)"""
 
 
-filename = '/Users/AlbertoK/Desktop/fer2013.csv'
+filename = '/Users/philliphoejbjerg/Desktop/UNI/1.semester/int_systemer/3-ugers/challenges-in-representation-learning-facial-expression-recognition-challenge/fer2013/fer2013.csv'
 data = pd.read_csv(filename, sep=",")
 data = data.drop('Usage',axis=1)
 
 X = []
 
-pixels = data.pixels
+disgust = np.where(data.emotion == 1)[0]
+data = data.drop(disgust, axis=0)
+
+pixels = data.pixels.to_numpy()
 for i in range(len(pixels)):
     img_array = list(map(int, list(pixels[i].split(" "))))
     IMG_SIZE = int(np.sqrt(np.size(img_array)))
     X.append(np.reshape(img_array,(IMG_SIZE, IMG_SIZE)))
 
 X = list(X)
-y = list(data.emotion)
+y = np.array(data.emotion)
 
 
 
