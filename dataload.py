@@ -15,7 +15,7 @@ import pandas as pd
 
 
 
-CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
+CATEGORIES = ["Angry", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
 """for category in CATEGORIES:  # do emotions
     path = os.path.join(DATADIR,category)  # create path to emotions
@@ -71,14 +71,20 @@ X = []
 disgust = np.where(data.emotion == 1)[0]
 data = data.drop(disgust, axis=0)
 
+y = np.array(data.emotion)
+
 pixels = data.pixels.to_numpy()
 for i in range(len(pixels)):
     img_array = list(map(int, list(pixels[i].split(" "))))
     IMG_SIZE = int(np.sqrt(np.size(img_array)))
     X.append(np.reshape(img_array,(IMG_SIZE, IMG_SIZE)))
+    
+    if y[i] >= 2:
+        y[i] = y[i]-1      
+    
 
 X = list(X)
-y = np.array(data.emotion)
+#y = np.array(data.emotion)
 
 
 

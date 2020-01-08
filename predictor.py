@@ -11,7 +11,7 @@ Created on Wed Jan  8 09:52:15 2020
 import cv2
 import tensorflow as tf
 
-CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
+CATEGORIES = ["Angry", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
 
 #Evt. gøres på en anden måde med webcam eller andet

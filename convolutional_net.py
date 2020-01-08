@@ -26,7 +26,7 @@ y = pickle.load(pickle_in)
 X = X/255.0
 
 dense_layers = [0]
-layer_sizes = [64]
+layer_sizes = [32]
 conv_layers = [3]
 
 for dense_layer in dense_layers:
@@ -64,7 +64,7 @@ for dense_layer in dense_layers:
             #epochs changed from 10 to 3
             model.fit(X, y,
                       batch_size=32,
-                      epochs=3,
+                      epochs=10,
                       validation_split=0.3,
                       callbacks=[tensorboard])
 
