@@ -24,7 +24,7 @@ def prepare(filepath):
 
 model = tf.keras.models.load_model("64x3-CNN.model")
 
-prediction = model.predict([prepare('/Users/philliphoejbjerg/github_repo/41028225-portrait-of-young-angry-man-instagram-style-.jpg')])
+prediction = model.predict([prepare("/Users/philliphoejbjerg/Documents/GitHub/emotionalligent/shutterstock_569555101.jpg")])
 print(prediction)  # will be a list in a list.
 print(CATEGORIES[int(prediction[0][0])])
 

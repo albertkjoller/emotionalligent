@@ -52,20 +52,20 @@ for dense_layer in dense_layers:
                 model.add(Dense(layer_size))
                 model.add(Activation('relu'))
 
-            model.add(Dense(1))
+            model.add(Dense(7))
             model.add(Activation('sigmoid'))
 
             tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
-            model.compile(loss='binary_crossentropy',
+            model.compile(loss='sparse_categorical_crossentropy',
                           optimizer='adam',
                           metrics=['accuracy'],
                           )
             #epochs changed from 10 to 3
             model.fit(X, y,
                       batch_size=32,
-                      epochs=10,
-                      validation_split=0.3,
+                      epochs=3,
+                      validation_split=0.1,
                       callbacks=[tensorboard])
 
 model.save('64x3-CNN.model')
