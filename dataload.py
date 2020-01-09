@@ -39,10 +39,6 @@ for i in range(len(pixels)):
     
 
 X = list(X)
-#y = np.array(data.emotion)
-
-
-
 X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
