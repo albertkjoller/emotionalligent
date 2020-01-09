@@ -7,10 +7,6 @@ Created on Wed Jan  8 09:30:21 2020
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import os
-import cv2
-from tqdm import tqdm
 import pandas as pd
 
 
