@@ -70,20 +70,22 @@ for dense_layer in dense_layers:
                       validation_split=0.1,
                       callbacks=[tensorboard])
             """
-NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+NAME = "{}-conv-{}-nodes-{}-dense-{}".format(3, 'decreasing', 0, int(time.time()))
 print(NAME)
 
 model = Sequential()
 
-model.add(Conv2D(2304, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(1, (5, 5), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(80, (3, 3)))
+
+model.add(Conv2D(1, (5, 5)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(1000, (3, 3)))
+
+model.add(Conv2D(1, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
