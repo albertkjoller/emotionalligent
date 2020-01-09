@@ -22,20 +22,6 @@ def prepare(filepath):
     new_array = cv2.resize(filepath, (IMG_SIZE, IMG_SIZE))
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
-def __draw_label(img, text, pos, bg_color):
-    font_face = cv2.FONT_HERSHEY_SIMPLEX
-    scale = 0.4
-    color = (0, 0, 0)
-    thickness = cv2.FILLED
-    margin = 2
-
-    txt_size = cv2.getTextSize(text, font_face, scale, thickness)
-
-    end_x = pos[0] + txt_size[0][0] + margin
-    end_y = pos[1] - txt_size[0][1] - margin
-
-    cv2.rectangle(img, pos, (end_x, end_y), bg_color, thickness)
-    cv2.putText(img, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
 
 
 model = tf.keras.models.load_model("64x3-CNN.model")
@@ -68,6 +54,13 @@ while True:
         text = CATEGORIES[np.where(prediction==np.max(prediction))[1][0]]
         print(text)
                 
+        font_face = cv2.FONT_HERSHEY_SIMPLEX
+        scale = 0.4
+        color = (255, 255, 255)
+        thickness = cv2.FILLED
+
+#        cv2.putText(frame, text, (20,20), font_face, scale, color, 1, cv2.LINE_AA)
+        
         if key == ord('q'):
             print("Turning off camera.")
             webcam.release()

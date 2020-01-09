@@ -15,6 +15,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import TensorBoard
 import pickle
 import time
+import matplotlib.pyplot as plt
 
 pickle_in = open("X.pickle","rb")
 X = pickle.load(pickle_in)
@@ -70,20 +71,20 @@ for dense_layer in dense_layers:
                       validation_split=0.1,
                       callbacks=[tensorboard])
             """
-NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+NAME = "{}-conv-{}-nodes-{}-dense-{}".format(3, 2, 1, int(time.time()))
 print(NAME)
 
 model = Sequential()
 
-model.add(Conv2D(2304, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(128, (3, 3), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(80, (3, 3)))
+model.add(Conv2D(128, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(1000, (3, 3)))
+model.add(Conv2D(128, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -94,22 +95,31 @@ model.add(Activation('softmax'))
 
 tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
-model.compile(loss='sparse_categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'],
-              )
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['acc'],)
 #epochs changed from 10 to 3
-model.fit(X, y,
-          batch_size=32,
-          epochs=3,
-          validation_split=0.1,
-          callbacks=[tensorboard])
+history = model.fit(X, y, batch_size=32, epochs=20, validation_split=0.1, callbacks=[tensorboard])
 
+
+
+
+#https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
 
 model.save('64x3-CNN.model')
-
-
-
 
 
 
