@@ -62,7 +62,7 @@ create_training_data()"""
     y.append(label)"""
 
 
-filename = '/Users/philliphoejbjerg/Desktop/UNI/1.semester/int_systemer/3-ugers/challenges-in-representation-learning-facial-expression-recognition-challenge/fer2013/fer2013.csv'
+filename = '/Users/AlbertoK/Desktop/fer2013.csv'
 data = pd.read_csv(filename, sep=",")
 data = data.drop('Usage',axis=1)
 

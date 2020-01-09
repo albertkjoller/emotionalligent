@@ -7,7 +7,7 @@ Created on Wed Jan  8 09:52:15 2020
 """
 
 
-
+import numpy as np
 import cv2
 import tensorflow as tf
 
@@ -24,9 +24,9 @@ def prepare(filepath):
 
 model = tf.keras.models.load_model("64x3-CNN.model")
 
-prediction = model.predict([prepare("/Users/philliphoejbjerg/Documents/GitHub/emotionalligent/shutterstock_569555101.jpg")])
+prediction = model.predict([prepare("/Users/AlbertoK/Desktop/DTU/Januar 2020/emotionalligent/thumbnail_large.jpg")])
 print(prediction)  # will be a list in a list.
-print(CATEGORIES[int(prediction[0][0])])
+print(CATEGORIES[np.where(prediction==np.max(prediction))[1][0]])
 
 
 

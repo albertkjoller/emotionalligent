@@ -52,7 +52,7 @@ for dense_layer in dense_layers:
                 model.add(Dense(layer_size))
                 model.add(Activation('relu'))
 
-            model.add(Dense(7))
+            model.add(Dense(6))
             model.add(Activation('sigmoid'))
 
             tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
