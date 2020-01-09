@@ -22,10 +22,11 @@ X = pickle.load(pickle_in)
 pickle_in = open("y.pickle","rb")
 y = pickle.load(pickle_in)
 
+#Standardizing/normalizing data by using the highest possible pixel value
 X = X/255.0
 
 dense_layers = [0]
-layer_sizes = [64]
+layer_sizes = [32]
 conv_layers = [3]
 
 for dense_layer in dense_layers:
@@ -51,12 +52,12 @@ for dense_layer in dense_layers:
                 model.add(Dense(layer_size))
                 model.add(Activation('relu'))
 
-            model.add(Dense(1))
+            model.add(Dense(6))
             model.add(Activation('sigmoid'))
 
             tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
-            model.compile(loss='binary_crossentropy',
+            model.compile(loss='sparse_categorical_crossentropy',
                           optimizer='adam',
                           metrics=['accuracy'],
                           )
@@ -64,7 +65,7 @@ for dense_layer in dense_layers:
             model.fit(X, y,
                       batch_size=32,
                       epochs=3,
-                      validation_split=0.3,
+                      validation_split=0.1,
                       callbacks=[tensorboard])
 
 model.save('64x3-CNN.model')
