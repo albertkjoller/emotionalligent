@@ -67,23 +67,7 @@ while True:
         
         text = CATEGORIES[np.where(prediction==np.max(prediction))[1][0]]
         print(text)
-        
-        
-        font_face = cv2.FONT_HERSHEY_SIMPLEX
-        scale = 0.4
-        color = (255, 255, 255)
-        thickness = cv2.FILLED
-        margin = 2
-        pos = (20,20)
-    
-        txt_size = cv2.getTextSize(text, font_face, scale, thickness)
-    
-        end_x = pos[0] + txt_size[0][0] + margin
-        end_y = pos[1] - txt_size[0][1] - margin
-        
-        cv2.putText(frame,text,(end_x,end_y), font_face, scale,color,thickness,cv2.LINE_AA)
-       
-        
+                
         if key == ord('q'):
             print("Turning off camera.")
             webcam.release()
