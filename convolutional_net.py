@@ -25,9 +25,11 @@ y = pickle.load(pickle_in)
 #Standardizing/normalizing data by using the highest possible pixel value
 X = X/255.0
 
-dense_layers = [0]
+"""dense_layers = [0]
 layer_sizes = [128]
-conv_layers = [3,1]
+conv_layers = [2]
+
+
 
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
@@ -67,6 +69,42 @@ for dense_layer in dense_layers:
                       epochs=3,
                       validation_split=0.1,
                       callbacks=[tensorboard])
+            """
+NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+print(NAME)
+
+model = Sequential()
+
+model.add(Conv2D(2304, (3, 3), input_shape=X.shape[1:]))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(80, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(1000, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())
+
+model.add(Dense(6))
+model.add(Activation('softmax'))
+
+tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+
+model.compile(loss='sparse_categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'],
+              )
+#epochs changed from 10 to 3
+model.fit(X, y,
+          batch_size=32,
+          epochs=3,
+          validation_split=0.1,
+          callbacks=[tensorboard])
+
 
 model.save('64x3-CNN.model')
 
