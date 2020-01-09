@@ -23,6 +23,7 @@ def prepare(filepath):
     new_array = cv2.resize(filepath, (IMG_SIZE, IMG_SIZE))
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
+
 model = tf.keras.models.load_model("64x3-CNN.model")
 
 
