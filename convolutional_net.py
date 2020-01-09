@@ -26,8 +26,8 @@ y = pickle.load(pickle_in)
 X = X/255.0
 
 dense_layers = [0]
-layer_sizes = [32]
-conv_layers = [3]
+layer_sizes = [128]
+conv_layers = [3,1]
 
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
@@ -53,7 +53,7 @@ for dense_layer in dense_layers:
                 model.add(Activation('relu'))
 
             model.add(Dense(6))
-            model.add(Activation('sigmoid'))
+            model.add(Activation('softmax'))
 
             tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
