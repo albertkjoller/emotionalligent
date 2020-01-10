@@ -8,8 +8,10 @@ Created on Wed Jan  8 09:52:15 2020
 
 import numpy as np
 import cv2
-import sys
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import time
+
 
 CATEGORIES = ["Angry", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
@@ -20,36 +22,47 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/20epochs.model")
+model = tf.keras.models.load_model("/Users/Jacobsen/Desktop/emo/dropoutCNN.model")
 
 
-key = cv2. waitKey(1)
+key = cv2.waitKey(1)
 webcam = cv2.VideoCapture(0)
 emoGraph = []
 
-cascPath = '/Applications/anaconda3/lib/python3.7/site-packages/cv2/data/haarcascade_frontalface_default.xml'
+cascPath = '/Users/Jacobsen/Desktop/emo/haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
+
+
+start = time.time()
+
 
 while True:
     try:
+        
+        
         check, frame = webcam.read()
         #print(frame) #prints matrix values of each framecd 
         key = cv2.waitKey(1)
         
         grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        grayFrame = np.array(grayFrame, dtype='uint8')
+        #grayFrame = np.array(grayFrame, dtype='uint8')
+        
+        
         
         faces = faceCascade.detectMultiScale(grayFrame,
             scaleFactor=1.1,
             minNeighbors=5,
             minSize=(200, 200),
             flags=cv2.CASCADE_SCALE_IMAGE)
-    
+
+        x, y, w, h = 0, 0, 48, 48
         # Draw a rectangle around the faces
-        for (x, y, w, h) in faces:
+        for x, y, w, h in faces:
             rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (90, 50, 255), 2)
-        
+    
         ROI = grayFrame[y:y+h, x:x+w]
+            
+        ROI = ROI.astype('float32') 
         
         prediction = model.predict([prepare(ROI)])
         
@@ -57,6 +70,8 @@ while True:
         pos = np.where(prediction==np.max(prediction))[1][0]
         text = CATEGORIES[pos]
         emoGraph.append(pos)
+        
+
     
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 1
@@ -66,6 +81,8 @@ while True:
         cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
         
         cv2.imshow("Emotionalligent", frame)
+        
+        
         
         if key == ord('q'):
             print("Turning off camera.")
@@ -83,6 +100,46 @@ while True:
         print("Program ended.")
         cv2.destroyAllWindows()
         break
+    
+    
+end = time.time()
+
+
+#happy, surprise, neutral, fear, angry, sad
+
+graph = []
+
+for i in range(len(emoGraph)):
+    if emoGraph[i] == 0:
+        graph.append(-2)
+    if emoGraph[i] == 1:
+        graph.append(-1)
+    if emoGraph[i] == 2:
+        graph.append(2)
+    if emoGraph[i] == 3:
+        graph.append(-3)
+    if emoGraph[i] == 4:
+        graph.append(1)
+    if emoGraph[i] == 5:
+        graph.append(0)
+
+
+
+time = (end - start)
+
+frame_count = np.size(graph)
+time = np.arange(0, time, time/frame_count)
+
+plt.plot(time, graph)
+
+y = [-3,-2,-1,0,1,2]
+emotions = ['sad', 'angry', 'fear', 'neutral', 'surprise', 'happy']
+plt.yticks(y,emotions)
+
+plt.ylabel("Emotions")
+plt.xlabel("Time")
+
+plt.show()
 
 
 
