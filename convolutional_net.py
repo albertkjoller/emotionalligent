@@ -32,19 +32,19 @@ print(NAME)
 
 model = Sequential()
 
-model.add(Conv2D(256, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(1, (3, 3), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(128, (3, 3)))
+model.add(Conv2D(1, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(64, (3, 3)))
+model.add(Conv2D(1, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(64, (3, 3)))
+model.add(Conv2D(1, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -64,7 +64,7 @@ tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['acc'],)
 #epochs changed from 10 to 3
-history = model.fit(X, y, batch_size=32, epochs=7, validation_split=0.1, callbacks=[tensorboard])
+history = model.fit(X, y, batch_size=32, epochs=1, validation_split=0.1, callbacks=[tensorboard])
 
 
 

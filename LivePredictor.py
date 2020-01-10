@@ -22,32 +22,26 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/Jacobsen/Desktop/emo/dropoutCNN.model")
+model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/dropoutCNN.model")
 
 
 key = cv2.waitKey(1)
 webcam = cv2.VideoCapture(0)
 emoGraph = []
 
-cascPath = '/Users/Jacobsen/Desktop/emo/haarcascade_frontalface_default.xml'
+cascPath = '/Users/AlbertoK/Desktop/kode/haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 
 
 start = time.time()
-
+x, y, w, h = 0, 0, 48, 48
 
 while True:
     try:
-        
-        
         check, frame = webcam.read()
-        #print(frame) #prints matrix values of each framecd 
         key = cv2.waitKey(1)
         
         grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #grayFrame = np.array(grayFrame, dtype='uint8')
-        
-        
         
         faces = faceCascade.detectMultiScale(grayFrame,
             scaleFactor=1.1,
@@ -55,7 +49,6 @@ while True:
             minSize=(200, 200),
             flags=cv2.CASCADE_SCALE_IMAGE)
 
-        x, y, w, h = 0, 0, 48, 48
         # Draw a rectangle around the faces
         for x, y, w, h in faces:
             rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (90, 50, 255), 2)
@@ -72,7 +65,6 @@ while True:
         emoGraph.append(pos)
         
 
-    
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 1
         color = (90, 50, 255)
@@ -82,14 +74,11 @@ while True:
         
         cv2.imshow("Emotionalligent", frame)
         
-        
-        
         if key == ord('q'):
             print("Turning off camera.")
             webcam.release()
             print("Camera off.")
             print("Program ended.")
-            print(emoGraph)
             cv2.destroyAllWindows()
             break
         
