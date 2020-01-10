@@ -22,14 +22,16 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/dropoutCNN.model")
+model = tf.keras.models.load_model("/Users/Jacobsen/Documents/GitHub/emotionalligent/dropoutCNN.model")
+
+
 
 
 key = cv2.waitKey(1)
 webcam = cv2.VideoCapture(0)
 emoGraph = []
 
-cascPath = '/Users/AlbertoK/Desktop/kode/haarcascade_frontalface_default.xml'
+cascPath = '/Users/Jacobsen/Documents/GitHub/emotionalligent/haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 
 
@@ -38,11 +40,15 @@ x, y, w, h = 0, 0, 48, 48
 
 while True:
     try:
+        
+        
         check, frame = webcam.read()
         key = cv2.waitKey(1)
         
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
+        
+        
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = faceCascade.detectMultiScale(grayFrame,
             scaleFactor=1.1,
             minNeighbors=5,
@@ -72,22 +78,29 @@ while True:
         
         cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
         
-        cv2.imshow("Emotionalligent", frame)
+        cv2.imshow("Emotionalligent is capturing", frame)
         
-        if key == ord('q'):
+
+        
+        
+        if key == ord('q') & 0xff:
             print("Turning off camera.")
             webcam.release()
-            print("Camera off.")
-            print("Program ended.")
             cv2.destroyAllWindows()
+            for i in range (1,5):
+                cv2.waitKey(1)
+            print("Camera off.")
             break
         
     except(KeyboardInterrupt):
         print("Turning off camera.")
         webcam.release()
+        cv2.destroyAllWindows()
+        for i in range (1,5):
+            cv2.waitKey(1)
         print("Camera off.")
         print("Program ended.")
-        cv2.destroyAllWindows()
+
         break
     
     
