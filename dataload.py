@@ -8,10 +8,12 @@ Created on Wed Jan  8 09:30:21 2020
 
 import numpy as np
 import pandas as pd
+from PIL import Image, ImageOps
+import cv2
 
 
 
-CATEGORIES = ["Angry", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
+CATEGORIES = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
 filename = '/Users/AlbertoK/Desktop/fer2013.csv'
 data = pd.read_csv(filename, sep=",")
@@ -19,24 +21,35 @@ data = data.drop('Usage',axis=1)
 
 X = []
 
-disgust = np.where(data.emotion == 1)[0]
-data = data.drop(disgust, axis=0)
+emotion = np.array(data.emotion)
+pos=[]  
+    
+for i in range(len(CATEGORIES)):
+    if i == 1:
+        i = i+1
+    else:
+        number = np.where(emotion==i)[0]
+        pos.extend(list(number[:4000]))
 
-y = np.array(data.emotion)
+pos = np.array(np.sort(pos))
+y = []
 
 pixels = data.pixels.to_numpy()
-for i in range(len(pixels)):
-    img_array = list(map(int, list(pixels[i].split(" "))))
+
+#Every picture
+for i in range(len(pos-1)):
+    img_array = list(map(int, list(pixels[pos[i]].split(" "))))
     IMG_SIZE = int(np.sqrt(np.size(img_array)))
     X.append(np.reshape(img_array,(IMG_SIZE, IMG_SIZE)))
     
-    if y[i] >= 2:
-        y[i] = y[i]-1      
+    if emotion[pos[i]] >= 2:
+        y.append(emotion[pos[i]]-1)
+    else:
+        y.append(emotion[pos[i]])
     
-
 X = list(X)
 X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
-
+y = np.array(y)
 
 import pickle
 
