@@ -8,6 +8,7 @@ Created on Wed Jan  8 09:52:15 2020
 
 import numpy as np
 import cv2
+import sys
 import tensorflow as tf
 
 CATEGORIES = ["Angry", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
@@ -26,28 +27,42 @@ key = cv2. waitKey(1)
 webcam = cv2.VideoCapture(0)
 emoGraph = []
 
+cascPath = '/Applications/anaconda3/lib/python3.7/site-packages/cv2/data/haarcascade_frontalface_default.xml'
+faceCascade = cv2.CascadeClassifier(cascPath)
+
 while True:
     try:
         check, frame = webcam.read()
-        print(frame) #prints matrix values of each framecd 
+        #print(frame) #prints matrix values of each framecd 
         key = cv2.waitKey(1)
         
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)/255
-        prediction = model.predict([prepare(grayFrame)])
-        print(prediction)  # will be a list in a list.
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        grayFrame = np.array(grayFrame, dtype='uint8')
+        
+        faces = faceCascade.detectMultiScale(grayFrame,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(100, 100),
+            flags=cv2.CASCADE_SCALE_IMAGE)
+    
+        # Draw a rectangle around the faces
+        for (x, y, w, h) in faces:
+            rectangle = cv2.rectangle(grayFrame, (x, y), (x+w, y+h), (90, 50, 255), 2)
+        
+        prediction = model.predict([prepare(rectangle)])
         
         pos = np.where(prediction==np.max(prediction))[1][0]
         text = CATEGORIES[pos]
         emoGraph.append(pos)
-        print(text)
-        
+    
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 1
-        color = (0,0,0)
+        color = (90, 50, 255)
         thickness = cv2.FILLED
         
-        cv2.putText(grayFrame, text, (200, 200), font, 1, color, thickness=2)
-        cv2.imshow("Capturing", grayFrame)
+        cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
+        
+        cv2.imshow("Emotionalligent", frame)
         
         if key == ord('q'):
             print("Turning off camera.")
@@ -55,6 +70,7 @@ while True:
             print("Camera off.")
             print("Program ended.")
             print(emoGraph)
+            print(x, y, h, w)
             cv2.destroyAllWindows()
             break
         

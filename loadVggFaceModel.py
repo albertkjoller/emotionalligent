@@ -5,69 +5,40 @@ Created on Fri Jan 10 11:41:08 2020
 
 @author: AlbertoK
 """
-import numpy as np
 import cv2
+import numpy as np
 
-from keras.models import Model, Sequential
-from keras.layers import Input, Convolution2D, ZeroPadding2D, MaxPooling2D, Flatten, Dense, Dropout, Activation
-from PIL import Image
-from keras.preprocessing.image import load_img, save_img, img_to_array
-from keras.applications.imagenet_utils import preprocess_input
-from keras.preprocessing import image
-import matplotlib.pyplot as plt
+cascPath = '/Applications/anaconda3/lib/python3.7/site-packages/cv2/data/haarcascade_frontalface_default.xml'
+faceCascade = cv2.CascadeClassifier(cascPath)
 
-from os import listdir
+video_capture = cv2.VideoCapture(0)
 
-def loadVggFaceModel():
-	model = Sequential()
-	model.add(ZeroPadding2D((1,1),input_shape=(224,224, 3)))
-	model.add(Convolution2D(64, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(64, (3, 3), activation='relu'))
-	model.add(MaxPooling2D((2,2), strides=(2,2)))
+while True:
+    # Capture frame-by-frame
+    ret, frame = video_capture.read()
 
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(128, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(128, (3, 3), activation='relu'))
-	model.add(MaxPooling2D((2,2), strides=(2,2)))
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = np.array(gray, dtype='uint8')
+            
+           
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags=cv2.CASCADE_SCALE_IMAGE
+    )
 
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(256, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(256, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(256, (3, 3), activation='relu'))
-	model.add(MaxPooling2D((2,2), strides=(2,2)))
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(MaxPooling2D((2,2), strides=(2,2)))
+    # Display the resulting frame
+    cv2.imshow('Video', frame)
 
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(ZeroPadding2D((1,1)))
-	model.add(Convolution2D(512, (3, 3), activation='relu'))
-	model.add(MaxPooling2D((2,2), strides=(2,2)))
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-	model.add(Convolution2D(4096, (7, 7), activation='relu'))
-	model.add(Dropout(0.5))
-	model.add(Convolution2D(4096, (1, 1), activation='relu'))
-	model.add(Dropout(0.5))
-	model.add(Convolution2D(2622, (1, 1)))
-	model.add(Flatten())
-	model.add(Activation('softmax'))
-	
-	#you can download pretrained weights from https://drive.google.com/file/d/1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo/view?usp=sharing
-	from keras.models import model_from_json
-	model.load_weights('vgg_face_weights.h5')
-	
-	vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
-	
-	return vgg_face_descriptor
+# When everything is done, release the capture
+video_capture.release()
+cv2.destroyAllWindows()
