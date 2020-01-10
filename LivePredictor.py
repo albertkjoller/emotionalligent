@@ -42,14 +42,17 @@ while True:
         faces = faceCascade.detectMultiScale(grayFrame,
             scaleFactor=1.1,
             minNeighbors=5,
-            minSize=(100, 100),
+            minSize=(200, 200),
             flags=cv2.CASCADE_SCALE_IMAGE)
     
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
-            rectangle = cv2.rectangle(grayFrame, (x, y), (x+w, y+h), (90, 50, 255), 2)
+            rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (90, 50, 255), 2)
         
-        prediction = model.predict([prepare(rectangle)])
+        ROI = grayFrame[y:y+h, x:x+w]
+        
+        prediction = model.predict([prepare(ROI)])
+        
         
         pos = np.where(prediction==np.max(prediction))[1][0]
         text = CATEGORIES[pos]
@@ -70,7 +73,6 @@ while True:
             print("Camera off.")
             print("Program ended.")
             print(emoGraph)
-            print(x, y, h, w)
             cv2.destroyAllWindows()
             break
         
