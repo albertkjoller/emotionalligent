@@ -132,16 +132,21 @@ time = (end - start)
 frame_count = np.size(graph)
 time = np.arange(0, time, time/frame_count)
 
+
 plt.plot(time, graph)
 
-y = [-3,-2,-1,0,1,2]
+yaxis = [-3,-2,-1,0,1,2]
 emotions = ['sad', 'angry', 'fear', 'neutral', 'surprise', 'happy']
-plt.yticks(y,emotions)
+plt.yticks(yaxis,emotions)
 
 plt.ylabel("Emotions")
 plt.xlabel("Time")
 
 plt.show()
+
+
+
+
 
 
 
