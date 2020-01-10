@@ -19,24 +19,26 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/DTU/Januar2020/emotionalligent/dropoutCNN.model")
+model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/20epochs.model")
 
 
 key = cv2. waitKey(1)
 webcam = cv2.VideoCapture(0)
+emoGraph = []
 
 while True:
     try:
         check, frame = webcam.read()
-        print(check) #prints true as long as the webcam is running
         print(frame) #prints matrix values of each framecd 
         key = cv2.waitKey(1)
         
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)/255
         prediction = model.predict([prepare(grayFrame)])
         print(prediction)  # will be a list in a list.
         
-        text = CATEGORIES[np.where(prediction==np.max(prediction))[1][0]]
+        pos = np.where(prediction==np.max(prediction))[1][0]
+        text = CATEGORIES[pos]
+        emoGraph.append(pos)
         print(text)
         
         font = cv2.FONT_HERSHEY_SIMPLEX
@@ -52,6 +54,7 @@ while True:
             webcam.release()
             print("Camera off.")
             print("Program ended.")
+            print(emoGraph)
             cv2.destroyAllWindows()
             break
         
