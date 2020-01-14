@@ -22,16 +22,24 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/Jacobsen/Documents/GitHub/emotionalligent/dropoutCNN.model")
+model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/128-256-128-64-32-6-dropout50-50epochs.model")
 
 
 
 
 key = cv2.waitKey(1)
 webcam = cv2.VideoCapture(0)
-emoGraph = []
+#video = cv2.VideoCapture('/Users/AlbertoK/Desktop/done/færdig god animation.mp4')
 
-cascPath = '/Users/Jacobsen/Documents/GitHub/emotionalligent/haarcascade_frontalface_default.xml'
+emoGraph = []
+angry = []
+fear = []
+happy = []
+sad = []
+surprise = []
+neutral = []
+
+cascPath = '/Users/AlbertoK/Desktop/kode/haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 
 
@@ -40,12 +48,9 @@ x, y, w, h = 0, 0, 48, 48
 
 while True:
     try:
-        
-        
         check, frame = webcam.read()
         key = cv2.waitKey(1)
-        
-        
+        #ret, videoframe = video.read()
         
         
         grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -69,8 +74,14 @@ while True:
         pos = np.where(prediction==np.max(prediction))[1][0]
         text = CATEGORIES[pos]
         emoGraph.append(pos)
-        
-
+                
+        angry.append(prediction[0][0])
+        fear.append(prediction[0][1])
+        happy.append(prediction[0][2])
+        sad.append(prediction[0][3])
+        surprise.append(prediction[0][4])
+        neutral.append(prediction[0][5])
+            
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 1
         color = (90, 50, 255)
@@ -78,7 +89,7 @@ while True:
         
         cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
         
-        cv2.imshow("Emotionalligent is capturing", frame)
+        cv2.imshow("Emotionalligent", (0,0,0))
         
 
         
@@ -105,7 +116,6 @@ while True:
     
     
 end = time.time()
-
 
 #happy, surprise, neutral, fear, angry, sad
 
@@ -141,7 +151,37 @@ plt.yticks(yaxis,emotions)
 
 plt.ylabel("Emotions")
 plt.xlabel("Time")
+plt.show()
 
+
+fig, axs = plt.subplots(6, sharex=True, sharey=True)
+fig.suptitle('Emotions')
+axs[0].plot(time, angry)
+axs[0].set_title('Angry')
+
+axs[1].plot(time, fear)
+axs[1].set_title('Fear')
+
+axs[2].plot(time, happy)
+axs[2].set_title('Happy')
+
+axs[3].plot(time, sad)
+axs[3].set_title('Sad')
+
+axs[4].plot(time, surprise)
+axs[4].set_title('Surprise')
+
+axs[5].plot(time, neutral)
+axs[5].set_title('Neutral')
+
+for ax in axs.flat:
+    ax.set(xlabel='Time')
+    
+for ax in axs.flat:
+    ax.label_outer()
+    
+plt.subplots_adjust(hspace=2)
+plt.ylabel('Percentage')
 plt.show()
 
 

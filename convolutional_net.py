@@ -7,7 +7,8 @@ Created on Wed Jan  8 09:44:34 2020
 """
 
 
-
+import numpy as np
+from sklearn.utils import shuffle
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
@@ -23,8 +24,9 @@ X = pickle.load(pickle_in)
 pickle_in = open("y.pickle","rb")
 y = pickle.load(pickle_in)
 
-#Standardizing data by using the highest possible pixel value
+#Standardizing and shuffling data by using the highest possible pixel value
 X = X/255.0
+X_shuffled, y_shuffled = shuffle(np.array(X), np.array(y))
 
 
 NAME = "{}-conv-{}-nodes-{}-dense-{}".format(3, 2, 1, int(time.time()))
@@ -32,29 +34,34 @@ print(NAME)
 
 model = Sequential()
 
-model.add(Conv2D(1, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(64, (3, 3), input_shape=X_shuffled.shape[1:]))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(rate=0.5))
+
+
+model.add(Conv2D(128, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(1, (3, 3)))
+model.add(Conv2D(128, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(rate=0.5))
 
-model.add(Conv2D(1, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(1, (3, 3)))
+model.add(Conv2D(64, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(rate=0.5))
 
 
 model.add(Flatten())
 
-model.add(Dense(32))
+model.add(Dense(64))
 model.add(Activation('relu'))
 
-model.add(Dropout(0.2))
+model.add(Dropout(rate=0.5))
 
 
 model.add(Dense(6))
@@ -64,7 +71,7 @@ tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['acc'],)
 #epochs changed from 10 to 3
-history = model.fit(X, y, batch_size=32, epochs=1, validation_split=0.1, callbacks=[tensorboard])
+history = model.fit(X_shuffled, y_shuffled, batch_size=32, epochs=100, validation_split=0.1, shuffle=True, callbacks=[tensorboard])
 
 
 
@@ -85,7 +92,7 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-model.save('dropoutCNN.model')
+model.save('64-128-128-64-32-6-dropout50(ikke ved stort lag)-100epochs.model')
 
 
 
