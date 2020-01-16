@@ -48,10 +48,10 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 start = time.time()
 x, y, w, h = 0, 0, 48, 48
 video = []
-for i in range(1,13):
-    video.append(time.time() + i*30)
+for i in range(1,7):
+    video.append(time.time() + i*6)
 
-for i in range(12):
+for i in range(6):
     
     while True:
         try:
@@ -65,6 +65,9 @@ for i in range(12):
                 for i in range (1,5):
                     cv2.waitKey(1)
                 print("Camera off.")
+                break
+            
+            elif time.time() > video[i]:
                 break
                 
             else:
@@ -178,7 +181,7 @@ plt.ylabel("Emotions")
 plt.xlabel("Time")
 plt.show()
 
-for i in range(12):
+for i in range(6):
     angry.append(total[i][0][0])
     fear.append(total[i][0][1])
     happy.append(total[i][0][2])
@@ -188,32 +191,32 @@ for i in range(12):
 
 fig, axs = plt.subplots(6, sharex=True)
 fig.suptitle('Emotions')
-axs[0].plot(np.arange(12), angry, '.', linestyle='-')
+axs[0].plot(np.arange(6), angry, '.', linestyle='-')
 axs[0].set_title('Angry')
 
-axs[1].plot(np.arange(12), fear, '.',linestyle='-')
+axs[1].plot(np.arange(6), fear, '.',linestyle='-')
 axs[1].set_title('Fear')
 
-axs[2].plot(np.arange(12), happy, '.',linestyle='-')
+axs[2].plot(np.arange(6), happy, '.',linestyle='-')
 axs[2].set_title('Happy')
 
-axs[3].plot(np.arange(12), sad, '.',linestyle='-')
+axs[3].plot(np.arange(6), sad, '.',linestyle='-')
 axs[3].set_title('Sad')
 
-axs[4].plot(np.arange(12), surprise, '.',linestyle='-')
+axs[4].plot(np.arange(6), surprise, '.',linestyle='-')
 axs[4].set_title('Surprise')
 
-axs[5].plot(np.arange(12), neutral, '.',linestyle='-')
+axs[5].plot(np.arange(6), neutral, '.',linestyle='-')
 axs[5].set_title('Neutral')
 
 for ax in axs.flat:
-    ax.set(xlabel='Videos of 30 sec.')
+    ax.set(xlabel='Videos of 6 sec.')
     
 for ax in axs.flat:
     ax.label_outer()
     
 plt.subplots_adjust(hspace=2)
-plt.ylabel('Percentage pr. 30 sec.')
+plt.ylabel('Percentage pr. 6 sec')
 plt.show()
 
 
