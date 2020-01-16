@@ -146,6 +146,7 @@ end = time.time()
 
 print(total)
 print(high)
+print(CATEGORIES)
 
 #happy, surprise, neutral, fear, angry, sad
 

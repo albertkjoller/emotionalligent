@@ -144,6 +144,17 @@ end = time.time()
 print(total)
 print(high)
 
+#Video 1
+print(['Happy','Surprise','Fear','Neutral','Angry','Fear','Happy','Surprise','Neutral','Sad','Angry','Sad'])
+#Video 2
+print(['Neutral','Surprise','Surprise','Fear','Neutral','Happy','Angry','Happy','Sad','Sad','Fear','Angry'])
+#Video 3
+print(['Sad','Happy','Surprise','Sad','Fear','Angry','Neutral','Fear','Surprise','Neutral','Happy','Angry'])
+#Video 4
+print(['Surprise','Angry','Surprise','Neutral','Neutral','Fear','Sad','Happy','Fear','Happy','Sad','Angry'])
+#Video 5
+print(['Sad','Neutral','Surprise','Fear','Neutral','Sad','Angry','Surprise','Happy','Happy','Angry','Fear'])
+
 #happy, surprise, neutral, fear, angry, sad
 
 graph = []
