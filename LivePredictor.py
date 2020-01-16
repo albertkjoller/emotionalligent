@@ -22,7 +22,7 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 
-model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/128-256-128-64-32-6-dropout50-50epochs.model")
+model = tf.keras.models.load_model("/Users/AlbertoK/Desktop/kode/64-128-128-64-32-6-dropout50(ikke ved stort lag)-100epochs.model")
 
 
 
@@ -38,6 +38,9 @@ happy = []
 sad = []
 surprise = []
 neutral = []
+videofeeling = []
+total = []
+high = []
 
 cascPath = '/Users/AlbertoK/Desktop/kode/haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
@@ -45,77 +48,106 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 
 start = time.time()
 x, y, w, h = 0, 0, 48, 48
+timeout = time.time() + 30*12   # 6 minutes from now
+video = []
+for i in range(1,13):
+    video.append(time.time() + i*30)
 
-while True:
-    try:
-        check, frame = webcam.read()
-        key = cv2.waitKey(1)
-        #ret, videoframe = video.read()
-        
-        
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(grayFrame,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(200, 200),
-            flags=cv2.CASCADE_SCALE_IMAGE)
-
-        # Draw a rectangle around the faces
-        for x, y, w, h in faces:
-            rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (90, 50, 255), 2)
+for i in range(12):
     
-        ROI = grayFrame[y:y+h, x:x+w]
+    while True:
+        try:
+            if time.time() > video[i]:
+                break
+        
+            elif key == ord('q') & 0xff:
+                print("Turning off camera.")
+                webcam.release()
+                cv2.destroyAllWindows()
+                for i in range (1,5):
+                    cv2.waitKey(1)
+                print("Camera off.")
+                break
             
-        ROI = ROI.astype('float32') 
-        
-        prediction = model.predict([prepare(ROI)])
-        
-        
-        pos = np.where(prediction==np.max(prediction))[1][0]
-        text = CATEGORIES[pos]
-        emoGraph.append(pos)
+            elif time.time() > video[i]:
+                break
                 
-        angry.append(prediction[0][0])
-        fear.append(prediction[0][1])
-        happy.append(prediction[0][2])
-        sad.append(prediction[0][3])
-        surprise.append(prediction[0][4])
-        neutral.append(prediction[0][5])
+            else:
+                check, frame = webcam.read()
+                key = cv2.waitKey(1)
+                            
+                grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                faces = faceCascade.detectMultiScale(grayFrame,
+                    scaleFactor=1.1,
+                    minNeighbors=5,
+                    minSize=(200, 200),
+                    flags=cv2.CASCADE_SCALE_IMAGE)
+        
+                # Draw a rectangle around the faces
+                for x, y, w, h in faces:
+                    rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (90, 50, 255), 2)
             
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        scale = 1
-        color = (90, 50, 255)
-        thickness = cv2.FILLED
-        
-        cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
-        
-        cv2.imshow("Emotionalligent", (0,0,0))
-        
-
-        
-        
-        if key == ord('q') & 0xff:
+                ROI = grayFrame[y:y+h, x:x+w]
+                    
+                ROI = ROI.astype('float32') 
+                
+                prediction = model.predict([prepare(ROI)])
+                
+                
+                pos = np.where(prediction==np.max(prediction))[1][0]
+                text = CATEGORIES[pos]
+                emoGraph.append(pos)
+                        
+                angry.append(prediction[0][0])
+                fear.append(prediction[0][1])
+                happy.append(prediction[0][2])
+                sad.append(prediction[0][3])
+                surprise.append(prediction[0][4])
+                neutral.append(prediction[0][5])
+                    
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                scale = 1
+                color = (90, 50, 255)
+                thickness = cv2.FILLED
+                
+                cv2.putText(frame, text, (200, 200), font, 1, color, thickness=2)
+                
+                cv2.imshow("Emotionalligent", frame)
+                
+        except(KeyboardInterrupt):
             print("Turning off camera.")
             webcam.release()
             cv2.destroyAllWindows()
             for i in range (1,5):
                 cv2.waitKey(1)
             print("Camera off.")
+            print("Program ended.")
             break
+            
+    sumFeeling = np.size(angry)
+    angryP = np.sum(angry)/sumFeeling
+    fearP = np.sum(fear)/sumFeeling
+    happyP = np.sum(happy)/sumFeeling
+    sadP = np.sum(sad)/sumFeeling
+    surpriseP = np.sum(surprise)/sumFeeling
+    neutralP = np.sum(neutral)/sumFeeling
         
-    except(KeyboardInterrupt):
-        print("Turning off camera.")
-        webcam.release()
-        cv2.destroyAllWindows()
-        for i in range (1,5):
-            cv2.waitKey(1)
-        print("Camera off.")
-        print("Program ended.")
+    videofeeling.append([round(angryP,5), round(fearP,5), round(happyP,5), round(sadP,5), round(surpriseP,5), round(neutralP,5)])
+    angry = []
+    fear = []
+    happy = []
+    sad = []
+    surprise = []
+    neutral = []
+    high.append(CATEGORIES[np.where(videofeeling==np.max(videofeeling))[1][0]])
+    total.append(videofeeling)
+    videofeeling = []
+    
 
-        break
-    
-    
 end = time.time()
+
+print(total)
+print(high)
 
 #happy, surprise, neutral, fear, angry, sad
 
@@ -135,8 +167,6 @@ for i in range(len(emoGraph)):
     if emoGraph[i] == 5:
         graph.append(0)
 
-
-
 time = (end - start)
 
 frame_count = np.size(graph)
@@ -153,25 +183,32 @@ plt.ylabel("Emotions")
 plt.xlabel("Time")
 plt.show()
 
+for i in range(12):
+    angry.append(total[i][0][0])
+    fear.append(total[i][0][1])
+    happy.append(total[i][0][2])
+    sad.append(total[i][0][3])
+    surprise.append(total[i][0][4])
+    neutral.append(total[i][0][5])
 
-fig, axs = plt.subplots(6, sharex=True, sharey=True)
+fig, axs = plt.subplots(6, sharex=True)
 fig.suptitle('Emotions')
-axs[0].plot(time, angry)
+axs[0].plot(np.arange(12), angry, '.', linestyle='-')
 axs[0].set_title('Angry')
 
-axs[1].plot(time, fear)
+axs[1].plot(np.arange(12), fear, '.',linestyle='-')
 axs[1].set_title('Fear')
 
-axs[2].plot(time, happy)
+axs[2].plot(np.arange(12), happy, '.',linestyle='-')
 axs[2].set_title('Happy')
 
-axs[3].plot(time, sad)
+axs[3].plot(np.arange(12), sad, '.',linestyle='-')
 axs[3].set_title('Sad')
 
-axs[4].plot(time, surprise)
+axs[4].plot(np.arange(12), surprise, '.',linestyle='-')
 axs[4].set_title('Surprise')
 
-axs[5].plot(time, neutral)
+axs[5].plot(np.arange(12), neutral, '.',linestyle='-')
 axs[5].set_title('Neutral')
 
 for ax in axs.flat:
@@ -183,7 +220,6 @@ for ax in axs.flat:
 plt.subplots_adjust(hspace=2)
 plt.ylabel('Percentage')
 plt.show()
-
 
 
 
